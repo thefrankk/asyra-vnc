@@ -1,6 +1,7 @@
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DISPLAY=:1
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
@@ -12,20 +13,15 @@ RUN apt-get update && apt-get install -y \
     websockify \
     supervisor \
     net-tools \
+    dbus-x11 \
+    xfonts-base \
+    xfonts-100dpi \
+    xfonts-75dpi \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up VNC password
-RUN mkdir -p /root/.vnc
-RUN echo "asyra123" | vncpasswd -f > /root/.vnc/passwd
-RUN chmod 600 /root/.vnc/passwd
-
-# Create xstartup file
-RUN echo '#!/bin/sh' > /root/.vnc/xstartup \
-    && echo 'unset SESSION_MANAGER' >> /root/.vnc/xstartup \
-    && echo 'unset DBUS_SESSION_BUS_ADDRESS' >> /root/.vnc/xstartup \
-    && echo 'exec startxfce4' >> /root/.vnc/xstartup \
-    && chmod +x /root/.vnc/xstartup
+# Create necessary directories
+RUN mkdir -p /root/.vnc /var/log/supervisor
 
 # Configure noVNC
 RUN ln -s /usr/share/novnc/vnc.html /usr/share/novnc/index.html
