@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  asyra-vnc:
+    build: .
+    container_name: asyra-vnc-server
+    ports:
+      - "5901:5901"  # VNC port
+      - "6080:6080"  # noVNC web interface port
+    environment:
+      - DISPLAY=:1
+    restart: unless-stopped
+    volumes:
+      - vnc-data:/root
+    networks:
+      - asyra-network
+
+volumes:
+  vnc-data:
+
+networks:
+  asyra-network:
+    driver: bridge
